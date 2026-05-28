@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.installed.cfg
+pip-wheel-metadata/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+.uv-cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_meta/
+
+# Datos sensibles / grandes
+data/
+regulations/
+models/
+Reglamentos md/
+logs_*.txt
+*.log
+output/
+scripts/
+*.xlsx
+*.xls
+*.csv
+*.parquet
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
