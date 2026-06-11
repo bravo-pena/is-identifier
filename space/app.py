@@ -36,7 +36,7 @@ def identify(file_obj):
             input_path=input_path,
             output_path=output_path,
             model=get_model(),
-            language="es",
+            language="auto",
             write_technical=False,
         )
         final_path = Path(tempfile.gettempdir()) / written.name
@@ -47,9 +47,10 @@ def identify(file_obj):
 with gr.Blocks(title="IS Identifier — Paso 1") as demo:
     gr.Markdown("# IS Identifier — Paso 1 (beta)")
     gr.Markdown(
-        "Upload a regulatory document and download a reviewable Excel: "
-        "structure-aware segments, substantive-context filter, "
-        "institutional-statement **candidates** and review flags.\n\n"
+        "Upload a regulatory document (Spanish or English — detected "
+        "automatically) and download a reviewable Excel: structure-aware "
+        "segments, substantive-context filter, institutional-statement "
+        "**candidates** and review flags.\n\n"
         "Sheets: `segments` (one row per segment), `schema` (column "
         "descriptions), `summary` (counts). Rows highlighted in amber carry "
         "`needs_review` flags. Paso 1 suggests candidates — it does **not** "

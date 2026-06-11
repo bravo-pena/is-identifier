@@ -34,9 +34,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-l",
         "--language",
-        choices=["es", "en"],
-        default="es",
-        help="Document language (translate other languages BEFORE running).",
+        choices=["auto", "es", "en"],
+        default="auto",
+        help=(
+            "Document language; 'auto' detects es/en from the text "
+            "(translate other languages BEFORE running)."
+        ),
     )
     parser.add_argument(
         "--no-technical",
@@ -50,7 +53,7 @@ def run_file(
     input_path: str | Path,
     output_path: str | Path | None,
     model: ISIdentifierModel,
-    language: str = "es",
+    language: str = "auto",
     write_technical: bool = True,
 ) -> Path:
     input_path = Path(input_path)
