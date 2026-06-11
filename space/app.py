@@ -21,7 +21,7 @@ def get_model() -> ISIdentifierModel:
     return _MODEL
 
 
-def identify(file_obj, language: str):
+def identify(file_obj):
     if file_obj is None:
         raise gr.Error("Upload a PDF, DOCX, Markdown, or TXT file first.")
 
@@ -36,7 +36,7 @@ def identify(file_obj, language: str):
             input_path=input_path,
             output_path=output_path,
             model=get_model(),
-            language=language,
+            language="es",
             write_technical=False,
         )
         final_path = Path(tempfile.gettempdir()) / written.name
@@ -47,27 +47,21 @@ def identify(file_obj, language: str):
 with gr.Blocks(title="IS Identifier — Paso 1") as demo:
     gr.Markdown("# IS Identifier — Paso 1 (beta)")
     gr.Markdown(
-        "Upload a regulatory document (Spanish or English) and download a "
-        "reviewable Excel: structure-aware segments, substantive-context "
-        "filter, institutional-statement **candidates** and review flags.\n\n"
+        "Upload a regulatory document and download a reviewable Excel: "
+        "structure-aware segments, substantive-context filter, "
+        "institutional-statement **candidates** and review flags.\n\n"
         "Sheets: `segments` (one row per segment), `schema` (column "
         "descriptions), `summary` (counts). Rows highlighted in amber carry "
         "`needs_review` flags. Paso 1 suggests candidates — it does **not** "
         "produce the final taxonomic coding (TYPE/TAXON/LINK belong to Paso 2)."
     )
-    with gr.Row():
-        file_input = gr.File(
-            label="Document",
-            file_types=[".pdf", ".docx", ".md", ".txt"],
-        )
-        language = gr.Radio(
-            choices=["es", "en"],
-            value="es",
-            label="Language",
-        )
+    file_input = gr.File(
+        label="Document (.pdf, .docx, .md, .txt)",
+        file_types=[".pdf", ".docx", ".md", ".txt"],
+    )
     run_button = gr.Button("Run Paso 1", variant="primary")
     output_file = gr.File(label="Excel result (Paso 1)")
-    run_button.click(identify, inputs=[file_input, language], outputs=output_file)
+    run_button.click(identify, inputs=[file_input], outputs=output_file)
 
 
 if __name__ == "__main__":
