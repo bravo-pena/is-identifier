@@ -26,6 +26,8 @@ import pandas as pd
 import re
 
 from .aim_extractor import extract_aims
+from .document_processor import process_document
+from .language_detect import detect_language
 from .segmenter import Segment, segment_document
 from .sentence_splitter import _load_model
 
@@ -173,13 +175,21 @@ def pipeline_paso1(
     system: str | None = None,
     model_version: str | None = None,
 ) -> tuple[pd.DataFrame, dict]:
-    """Run Paso 1 on a document. Returns (DataFrame, technical sidecar dict)."""
+    """Run Paso 1 on a document. Returns (DataFrame, technical sidecar dict).
+
+    ``language="auto"`` detects es/en from the document text. The transformer
+    is multilingual either way; the language only selects the spaCy model
+    used for sentence splitting and trigger-verb extraction.
+    """
     path = Path(path)
     if case_id is None:
         case_id = case_id_from_filename(path)
     if model_version is None:
         model_version = ("is-identifier-1.0" if aim_model is not None
                          else "heuristic_extractor")
+    if language == "auto":
+        sample = " ".join(b["text"] for b in process_document(path))
+        language = detect_language(sample)
 
     segments = segment_document(str(path), language=language)
 
