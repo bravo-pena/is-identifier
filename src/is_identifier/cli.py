@@ -4,9 +4,7 @@ import argparse
 import os
 from pathlib import Path
 
-import pandas as pd
-
-from . import pipeline
+from . import pipeline_paso1, write_paso1_excel
 from .model_v1 import ISIdentifierModel
 
 DEFAULT_MODEL = "bravo-pena/is-identifier-1.0"
@@ -15,13 +13,17 @@ DEFAULT_MODEL = "bravo-pena/is-identifier-1.0"
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="is-identifier",
-        description="Run IS Identifier 1.0 on a PDF, DOCX, Markdown, or TXT file.",
+        description=(
+            "Run IS Identifier (Paso 1) on a PDF, DOCX, Markdown, or TXT file. "
+            "Produces a reviewable Excel of structure-aware segments with "
+            "institutional-statement candidates."
+        ),
     )
     parser.add_argument("input", help="Path to .pdf, .docx, .md, or .txt input file.")
     parser.add_argument(
         "-o",
         "--output",
-        help="Path to output .xlsx file. Defaults to <input_stem>_is_identifier.xlsx.",
+        help="Path to output .xlsx file. Defaults to <input_stem>_paso1.xlsx.",
     )
     parser.add_argument(
         "-m",
@@ -34,12 +36,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--language",
         choices=["es", "en"],
         default="es",
-        help="Sentence-splitting language.",
+        help="Document language (translate other languages BEFORE running).",
     )
     parser.add_argument(
-        "--sheet-name",
-        default="institutional_statements",
-        help="Excel sheet name.",
+        "--no-technical",
+        action="store_true",
+        help="Skip the *_technical.json sidecar (span offsets for debugging).",
     )
     return parser
 
@@ -49,28 +51,17 @@ def run_file(
     output_path: str | Path | None,
     model: ISIdentifierModel,
     language: str = "es",
-    sheet_name: str = "institutional_statements",
+    write_technical: bool = True,
 ) -> Path:
     input_path = Path(input_path)
     if output_path is None:
-        output_path = input_path.with_name(f"{input_path.stem}_is_identifier.xlsx")
+        output_path = input_path.with_name(f"{input_path.stem}_paso1.xlsx")
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    df = pipeline(input_path, language=language, aim_model=model, predict_mode="model_1_0")
-    _write_excel(df, output_path, sheet_name=sheet_name)
+    df, technical = pipeline_paso1(input_path, aim_model=model, language=language)
+    write_paso1_excel(df, output_path, technical if write_technical else None)
     return output_path
-
-
-def _write_excel(df: pd.DataFrame, output_path: Path, sheet_name: str) -> None:
-    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False, sheet_name=sheet_name)
-        worksheet = writer.sheets[sheet_name]
-        worksheet.freeze_panes = "A2"
-        for column_cells in worksheet.columns:
-            header = str(column_cells[0].value or "")
-            width = min(max(len(header) + 2, 12), 80)
-            worksheet.column_dimensions[column_cells[0].column_letter].width = width
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -81,7 +72,7 @@ def main(argv: list[str] | None = None) -> int:
         output_path=args.output,
         model=model,
         language=args.language,
-        sheet_name=args.sheet_name,
+        write_technical=not args.no_technical,
     )
     print(f"Wrote {output}")
     return 0

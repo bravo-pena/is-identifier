@@ -11,6 +11,7 @@ build/
 .installed.cfg
 pip-wheel-metadata/
 .pytest_cache/
+.pytest_tmp/
 .coverage
 htmlcov/
 
@@ -32,7 +33,8 @@ Reglamentos md/
 logs_*.txt
 *.log
 output/
-scripts/
+scripts/*
+!scripts/smoke_test.py
 *.xlsx
 *.xls
 *.csv

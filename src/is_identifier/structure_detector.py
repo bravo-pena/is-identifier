@@ -22,7 +22,11 @@ _SKIP_PATTERNS = [
     re.compile(r"(?i)^(EN\s+SU\s+VIRTUD|POR\s+LO\s+TANTO|POR\s+TANTO)"),
     # Closing / signature formulas (Spanish)
     re.compile(r"(?i)^(Dado\s+(en|a)\s+|En\s+fe\s+de\s+lo\s+cual|En\s+testimonio)"),
-    re.compile(r"(?i)^(Firmado|Rubricado|El\s+Presidente|La\s+Secretar)"),
+    re.compile(r"(?i)^(Firmado|Rubricado)"),
+    # Signature lines like "El Presidente" / "La Secretaria" only when they
+    # stand (nearly) alone — sentences starting with "El Presidente convocará…"
+    # are normative body text (bug found 2026-06-10 via context_filter_conflict)
+    re.compile(r"(?i)^(El\s+Presidente|La\s+Secretar[ií]a?|El\s+Secretario|El\s+Tesorero)\s*[,.:]?\s*$"),
     re.compile(r"(?i)^(Aprobado\s+en|Publicado\s+en\s+el|B\.O\.|D\.O\.|BOE)"),
     re.compile(r"(?i)^(En\s+\w+,\s+a\s+\d+\s+de)"),        # "En Madrid, a 5 de..."
     re.compile(r"(?i)^Declaro\s+estar\s+de\s+acuerdo"),      # signature consent clause
@@ -56,7 +60,10 @@ _METADATA_PATTERNS = [
     re.compile(r"(?i)^Chapter\s+[IVXivx\d]+"),
     re.compile(r"(?i)^(Section|Sec\.)\s+" + _ROMAN_OR_DIGIT),
     re.compile(r"(?i)^Annex\s+[IVXivx\d]*"),
-    re.compile(r"(?i)^(BY-LAWS|CONSTITUTION\s+AND\s+BY-LAWS|BOARD\s+OF\s+TRUSTEES|DUTIES\s+AND\s+RESPONSIBILITIES|MEMBERSHIP|MEETINGS|QUORUM|ELECTION\s+OF\s+OFFICERS)\b"),
+    # English keyword headings: only when the line has no lowercase tail
+    # ("MEMBERSHIP" yes; "Membership is open to households..." is body text —
+    # bug found 2026-06-10 via context_filter_conflict)
+    re.compile(r"(?i)^(BY-LAWS|CONSTITUTION\s+AND\s+BY-LAWS|BOARD\s+OF\s+TRUSTEES|DUTIES\s+AND\s+RESPONSIBILITIES|MEMBERSHIP|MEETINGS|QUORUM|ELECTION\s+OF\s+OFFICERS)\b(?=[^a-z]*$)"),
 ]
 
 # ── Article reference extractor ──────────────────────────────────────────────

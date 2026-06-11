@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "is-identifier"
-version = "1.0.0"
-description = "Inference pipeline for identifying institutional statements in regulatory documents"
+version = "1.1.0"
+description = "Paso 1 inference pipeline: regulatory documents to reviewable segments with institutional-statement candidates"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "Felipe Bravo-Pena" }]
@@ -19,6 +19,9 @@ classifiers = [
 ]
 dependencies = [
     "spacy>=3.7",
+    # spacy.cli imports click directly, but typer>=0.16 (pulled by spacy)
+    # no longer depends on it — declare it explicitly
+    "click>=8.0",
     "pypdf>=3.0",
     "python-docx",
     "pandas",
