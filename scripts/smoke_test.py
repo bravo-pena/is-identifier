@@ -7,7 +7,7 @@ the Excel and verifies the output contract. Not part of pytest (downloads /
 loads ~500 MB of weights).
 
 Usage:
-    python scripts/smoke_test.py [model_dir_or_hf_id]   # default: models/is_identifier_1_0
+    python scripts/smoke_test.py [model_dir_or_hf_id]   # default: models/is_identifier_1_2
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ Dado en la ciudad, a 1 de enero de 2026.
 
 
 def main() -> int:
-    model_id = sys.argv[1] if len(sys.argv) > 1 else "models/is_identifier_1_0"
+    model_id = sys.argv[1] if len(sys.argv) > 1 else "models/is_identifier_1_2"
     failures: list[str] = []
 
     print(f"[1/5] Loading model + tokenizer: {model_id}")

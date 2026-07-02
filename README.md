@@ -1,4 +1,4 @@
-# IS Identifier 1.1 — Paso 1 (beta)
+# IS Identifier 1.2 — Paso 1 (beta)
 
 IS Identifier converts a regulatory document (PDF, Word `.docx`, Markdown, or
 TXT) into a **reviewable Excel of structure-aware segments** with
@@ -66,7 +66,7 @@ is-identifier regulation.pdf \
 Using a local model export:
 
 ```bash
-is-identifier regulation.docx --model models/is_identifier_1_0 --language en
+is-identifier regulation.docx --model models/is_identifier_1_2 --language en
 ```
 
 You can also set the model once:
@@ -97,17 +97,20 @@ write_paso1_excel(df, "regulation_paso1.xlsx", technical)
 
 Architecture: multilingual DistilBERT with a BIO span head (CRF-decoded) and
 an auxiliary ordinal count head. `aim_n_suggested` is derived from decoded
-spans. Model weights: `is-identifier-1.0` (unchanged in this release; 1.1
-updates the pipeline around it).
+spans. Model weights: `is-identifier-1.2` — an interim retrain of the 1.0
+recipe on the annotation base after the June 2026 correction round (verified
+label fixes from the coding team). The pipeline code is unchanged from 1.1.
 
-Validation summary for model 1.0:
+Provisional validation summary for model 1.2 (leave-one-regulation-out cross
+validation on the corrected base; a further label-review round is in progress,
+so these figures will be re-frozen with the final base):
 
-| Metric | Value | Target | Status |
-| --- | ---: | ---: | --- |
-| `count_macro_f1` | 0.5345 | 0.520 | PASS |
-| `span_f1_partial` | 0.6723 | 0.650 | PASS |
-| `recall_aim0` | 0.5739 | 0.550 | PASS |
-| `recall_aim_ge1` | 0.9225 | 0.850 | PASS |
+| Metric | Value | 1.0 baseline |
+| --- | ---: | ---: |
+| `count_macro_f1` | 0.556 | 0.5345 |
+| `span_f1_partial` | 0.6925 | 0.6723 |
+| `recall_aim0` | 0.6448 | 0.5739 |
+| `recall_aim_ge1` | 0.9316 | 0.9225 |
 
 The validation dataset is private and is not included in this repository.
 

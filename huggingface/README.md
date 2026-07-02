@@ -13,37 +13,42 @@ tags:
   - span-extraction
   - multilingual
 model-index:
-  - name: IS Identifier 1.0
+  - name: IS Identifier 1.2
     results:
       - task:
           type: token-classification
           name: AIM span extraction and AIM.n counting
         dataset:
-          name: Private regulatory annotation dataset
+          name: Private regulatory annotation dataset (June 2026 correction round)
           type: private
         metrics:
           - name: count_macro_f1
             type: f1
-            value: 0.5345
+            value: 0.556
           - name: span_f1_partial
             type: f1
-            value: 0.6723
+            value: 0.6925
           - name: recall_aim0
             type: recall
-            value: 0.5739
+            value: 0.6448
           - name: recall_aim_ge1
             type: recall
-            value: 0.9225
+            value: 0.9316
 ---
 
-# IS Identifier 1.0
+# IS Identifier 1.2
 
-IS Identifier 1.0 identifies institutional statements in regulatory sentences.
+IS Identifier 1.2 identifies institutional statements in regulatory sentences.
 It predicts AIM spans using a BIO token-classification head and derives the
 suggested AIM count from the decoded spans.
 
+> This repository keeps its original id (`is-identifier-1.0`) for continuity;
+> it hosts the **current model version, 1.2** (see `training_config.json` and
+> the validation table below). Earlier revisions remain available in the repo
+> history.
+
 The model is intended to be used with the companion Python package
-(**version 1.1, Paso 1**). Given a PDF, Word `.docx`, Markdown, or TXT file,
+(**version 1.2, Paso 1**). Given a PDF, Word `.docx`, Markdown, or TXT file,
 the package exports a reviewable Excel of structure-aware segments with AIM
 **candidates**, a substantive-context filter and human-review flags
 (`needs_review` / `review_reason`). Paso 1 proposes candidates for human
@@ -83,12 +88,20 @@ is-identifier regulation.pdf \
 
 ## Validation
 
-| Metric | Value | Target | Status |
-| --- | ---: | ---: | --- |
-| `count_macro_f1` | 0.5345 | 0.520 | PASS |
-| `span_f1_partial` | 0.6723 | 0.650 | PASS |
-| `recall_aim0` | 0.5739 | 0.550 | PASS |
-| `recall_aim_ge1` | 0.9225 | 0.850 | PASS |
+Version 1.2 is an interim retrain of the 1.0 recipe on the annotation base
+after the June 2026 correction round (verified label fixes from the coding
+team; same architecture and hyper-parameters). Figures are provisional: a
+further label-review round (double coding + list-article convention) is in
+progress and the metrics will be re-frozen with the final base.
+
+Leave-one-regulation-out cross validation, 14 folds:
+
+| Metric | 1.2 (provisional) | 1.0 baseline |
+| --- | ---: | ---: |
+| `count_macro_f1` | 0.556 | 0.5345 |
+| `span_f1_partial` | 0.6925 | 0.6723 |
+| `recall_aim0` | 0.6448 | 0.5739 |
+| `recall_aim_ge1` | 0.9316 | 0.9225 |
 
 The validation data is private and is not included in this model repository.
 

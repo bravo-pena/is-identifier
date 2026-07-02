@@ -185,7 +185,7 @@ def pipeline_paso1(
     if case_id is None:
         case_id = case_id_from_filename(path)
     if model_version is None:
-        model_version = ("is-identifier-1.0" if aim_model is not None
+        model_version = ("is-identifier-1.2" if aim_model is not None
                          else "heuristic_extractor")
     if language == "auto":
         sample = " ".join(b["text"] for b in process_document(path))

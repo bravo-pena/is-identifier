@@ -47,7 +47,7 @@ def test_pipeline_paso1_contract(tmp_path):
            if c in FORBIDDEN_COLUMNS or c.upper().startswith(("TYPE.", "TAXON.", "LINK."))]
     assert bad == []
     assert df["segment_text"].str.len().gt(0).all()
-    assert (df["model_version"] == "is-identifier-1.0").all()
+    assert (df["model_version"] == "is-identifier-1.2").all()
     # list structure preserved
     items = df[df["is_list_item"]]
     assert len(items) == 2

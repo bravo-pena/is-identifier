@@ -7,7 +7,7 @@ production output.
 
 Usage::
 
-    model = ISIdentifierModel.from_pretrained("models/is_identifier_1_0")
+    model = ISIdentifierModel.from_pretrained("models/is_identifier_1_2")
     pred = model.predict("Los regantes deberán pagar la cuota anual.")
     print(pred.count, pred.spans)
 
